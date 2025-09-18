@@ -7,11 +7,17 @@ import {
   selectFeeds,
   selectFeedsLoading
 } from '../../services/slices/ordersSlice';
+import {
+  selectIngredients,
+  selectIngredientsLoading
+} from '../../services/slices/ingredientsSlice';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
   const orders = useSelector(selectFeeds);
-  const isLoading = useSelector(selectFeedsLoading);
+  const isOrdersLoading = useSelector(selectFeedsLoading);
+  const ingredients = useSelector(selectIngredients);
+  const isIngredientsLoading = useSelector(selectIngredientsLoading);
 
   useEffect(() => {
     dispatch(fetchFeeds());
@@ -20,8 +26,7 @@ export const Feed: FC = () => {
   const handleGetFeeds = () => {
     dispatch(fetchFeeds());
   };
-
-  if (isLoading) {
+  if (isOrdersLoading || isIngredientsLoading || !ingredients.length) {
     return <Preloader />;
   }
 

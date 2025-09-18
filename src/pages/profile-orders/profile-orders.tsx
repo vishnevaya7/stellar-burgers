@@ -8,23 +8,34 @@ import {
   selectUserOrdersLoading,
   selectUserOrdersError
 } from '../../services/slices/ordersSlice';
+import {
+  selectIngredients,
+  selectIngredientsLoading
+} from '../../services/slices/ingredientsSlice';
 
 export const ProfileOrders: FC = () => {
   const dispatch = useDispatch();
   const orders = useSelector(selectUserOrders);
-  const isLoading = useSelector(selectUserOrdersLoading);
+  const isOrdersLoading = useSelector(selectUserOrdersLoading);
   const error = useSelector(selectUserOrdersError);
+  const ingredients = useSelector(selectIngredients);
+  const isIngredientsLoading = useSelector(selectIngredientsLoading);
+
+  console.log('ProfileOrders component rendered', {
+    ordersCount: orders.length,
+    ingredientsCount: ingredients.length,
+    isOrdersLoading,
+    isIngredientsLoading
+  });
 
   useEffect(() => {
+    console.log('ProfileOrders useEffect - fetching user orders');
     dispatch(fetchUserOrders());
   }, [dispatch]);
-
-  // показываем загрузку во время первичной загрузки заказов
-  if (isLoading && orders.length === 0) {
+  if (isOrdersLoading || isIngredientsLoading || ingredients.length === 0) {
     return <Preloader />;
   }
 
-  // показываем ошибку, если что-то пошло не так
   if (error) {
     return (
       <div style={{ textAlign: 'center', padding: '20px' }}>

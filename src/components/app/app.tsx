@@ -12,68 +12,22 @@ import {
   NotFound404
 } from '@pages';
 import { Modal, IngredientDetails, OrderInfo, AppHeader } from '@components';
-import { useSelector, useDispatch } from '../../services/store';
-import {
-  selectIsAuthenticated,
-  selectIsAuthChecked,
-  checkUserAuth
-} from '../../services/slices/authSlice';
 import '../../index.css';
 import styles from './app.module.css';
-
-// только для авторизованных
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, navigate]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  return <>{children}</>;
-};
-
-//  для неавторизованных
-const OnlyUnAuthRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
-
-  if (isAuthenticated) {
-    return null;
-  }
-  return <>{children}</>;
-};
+import ProtectedRoute from '../routes/protected-route';
+import { useDispatch } from '../../services/store';
+import { checkUserAuth } from '../../services/slices/authSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 
 const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const background = location.state && location.state.background;
-  const isAuthChecked = useSelector(selectIsAuthChecked);
   useEffect(() => {
     dispatch(checkUserAuth());
+    dispatch(fetchIngredients());
   }, [dispatch]);
-  if (!isAuthChecked) {
-    return (
-      <div className={styles.app}>
-        <AppHeader />
-        <div>Загрузка...</div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.app}>
       <AppHeader />
@@ -82,40 +36,43 @@ const App = () => {
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
 
+        {/* маршруты для модальных окон как обычные страницы */}
+        <Route path='/feed/:number' element={<OrderInfo />} />
+        <Route path='/ingredients/:id' element={<IngredientDetails />} />
+
         {/* маршруты только для неавторизованных */}
         <Route
           path='/login'
           element={
-            <OnlyUnAuthRoute>
+            <ProtectedRoute onlyUnAuth>
               <Login />
-            </OnlyUnAuthRoute>
+            </ProtectedRoute>
           }
         />
         <Route
           path='/register'
           element={
-            <OnlyUnAuthRoute>
+            <ProtectedRoute onlyUnAuth>
               <Register />
-            </OnlyUnAuthRoute>
+            </ProtectedRoute>
           }
         />
         <Route
           path='/forgot-password'
           element={
-            <OnlyUnAuthRoute>
+            <ProtectedRoute onlyUnAuth>
               <ForgotPassword />
-            </OnlyUnAuthRoute>
+            </ProtectedRoute>
           }
         />
         <Route
           path='/reset-password'
           element={
-            <OnlyUnAuthRoute>
+            <ProtectedRoute onlyUnAuth>
               <ResetPassword />
-            </OnlyUnAuthRoute>
+            </ProtectedRoute>
           }
         />
-
         {/* защищенные маршруты */}
         <Route
           path='/profile'
@@ -130,6 +87,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <ProfileOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <ProtectedRoute>
+              <OrderInfo />
             </ProtectedRoute>
           }
         />

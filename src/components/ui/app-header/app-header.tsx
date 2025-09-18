@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { NavLink } from 'react-router-dom';
 import styles from './app-header.module.css';
 import { TAppHeaderUIProps } from './type';
 import {
@@ -8,50 +9,59 @@ import {
   ProfileIcon
 } from '@zlden/react-developer-burger-ui-components';
 
-export const AppHeaderUI: FC<TAppHeaderUIProps> = ({
-  userName,
-  onConstructorClick,
-  onFeedClick,
-  onProfileClick,
-  onLogout
-}) => (
+export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName, onLogout }) => (
   <header className={styles.header}>
     <nav className={`${styles.menu} p-4`}>
       <div className={styles.menu_part_left}>
-        <div
-          className={styles.menu_item}
-          onClick={onConstructorClick}
-          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+        <NavLink
+          to='/'
+          className={({ isActive }) =>
+            `${styles.link} ${isActive ? styles.link_active : ''}`
+          }
+          end
         >
-          <BurgerIcon type='primary' />
-          <p className='text text_type_main-default ml-2 mr-10'>Конструктор</p>
-        </div>
-        <div
-          className={styles.menu_item}
-          onClick={onFeedClick}
-          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+          {({ isActive }) => (
+            <>
+              <BurgerIcon type={isActive ? 'primary' : 'secondary'} />
+              <p className='text text_type_main-default ml-2 mr-10'>
+                Конструктор
+              </p>
+            </>
+          )}
+        </NavLink>
+        <NavLink
+          to='/feed'
+          className={({ isActive }) =>
+            `${styles.link} ${isActive ? styles.link_active : ''}`
+          }
         >
-          <ListIcon type='primary' />
-          <p className='text text_type_main-default ml-2'>Лента заказов</p>
-        </div>
+          {({ isActive }) => (
+            <>
+              <ListIcon type={isActive ? 'primary' : 'secondary'} />
+              <p className='text text_type_main-default ml-2'>Лента заказов</p>
+            </>
+          )}
+        </NavLink>
       </div>
-      <div
-        className={styles.logo}
-        onClick={onConstructorClick}
-        style={{ cursor: 'pointer' }}
-      >
+      <NavLink to='/' className={styles.logo} end>
         <Logo className='' />
-      </div>
+      </NavLink>
       <div className={styles.link_position_last}>
-        <div
-          onClick={onProfileClick}
-          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+        <NavLink
+          to='/profile'
+          className={({ isActive }) =>
+            `${styles.link} ${isActive ? styles.link_active : ''}`
+          }
         >
-          <ProfileIcon type='primary' />
-          <p className='text text_type_main-default ml-2'>
-            {userName || 'Личный кабинет'}
-          </p>
-        </div>
+          {({ isActive }) => (
+            <>
+              <ProfileIcon type={isActive ? 'primary' : 'secondary'} />
+              <p className='text text_type_main-default ml-2'>
+                {userName || 'Личный кабинет'}
+              </p>
+            </>
+          )}
+        </NavLink>
         {userName && onLogout && (
           <button
             onClick={onLogout}

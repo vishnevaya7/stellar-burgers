@@ -1,32 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
-import ingredientsReducer from './slices/ingredientsSlice';
-import authReducer from './slices/authSlice';
-import ordersReducer from './slices/ordersSlice';
-import constructorReducer from './slices/constructorSlice';
+import store, { RootState } from './store';
 
-// Создаем тип для нашего тестового store
-const createTestStore = () =>
-  configureStore({
-    reducer: {
-      ingredients: ingredientsReducer,
-      auth: authReducer,
-      orders: ordersReducer,
-      burgerConstructor: constructorReducer
-    }
-  });
-
-type TestStore = ReturnType<typeof createTestStore>;
-type TestRootState = ReturnType<TestStore['getState']>;
-
-describe('rootReducer', () => {
-  let store: TestStore;
-
-  beforeEach(() => {
-    store = createTestStore();
-  });
-
-  it('должен правильно инициализировать rootReducer с начальными состояниями всех слайсов', () => {
-    const state: TestRootState = store.getState();
+describe('store', () => {
+  it('должен правильно инициализироваться с начальными состояниями всех слайсов', () => {
+    const state = store.getState();
 
     // Проверяем, что все слайсы присутствуют в состоянии
     expect(state).toHaveProperty('ingredients');
@@ -79,7 +55,7 @@ describe('rootReducer', () => {
   });
 
   it('должен иметь правильную структуру RootState', () => {
-    const state: TestRootState = store.getState();
+    const state: RootState = store.getState();
 
     // Проверяем, что состояние содержит только ожидаемые ключи
     const expectedKeys = ['ingredients', 'auth', 'orders', 'burgerConstructor'];
@@ -91,8 +67,19 @@ describe('rootReducer', () => {
   it('должен корректно работать с Redux store', () => {
     // Проверяем, что store создается с правильной конфигурацией
     expect(store).toBeDefined();
-    expect(store.getState).toBeDefined();
-    expect(store.dispatch).toBeDefined();
-    expect(store.subscribe).toBeDefined();
+    expect(typeof store.getState).toBe('function');
+    expect(typeof store.dispatch).toBe('function');
+    expect(typeof store.subscribe).toBe('function');
+    expect(typeof store.replaceReducer).toBe('function');
+  });
+
+  it('должен экспортировать правильные типы', () => {
+    // Проверяем, что типы правильно экспортируются
+    const state: RootState = store.getState();
+
+    expect(state.ingredients).toBeDefined();
+    expect(state.auth).toBeDefined();
+    expect(state.orders).toBeDefined();
+    expect(state.burgerConstructor).toBeDefined();
   });
 });

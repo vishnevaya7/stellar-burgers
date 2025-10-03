@@ -96,9 +96,7 @@
     "format": "prettier ./src --write",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test": "jest"
   },
   "eslintConfig": {
     "extends": [
